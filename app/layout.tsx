@@ -5,7 +5,7 @@ import { TransitionLayer } from "@/components/TransitionLayer";
 
 export const metadata: Metadata = {
   title: "BAMN",
-  description: "BAMN — architecture studio.",
+  description: "Architecture Studio.",
 };
 
 export default function RootLayout({

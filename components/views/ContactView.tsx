@@ -13,10 +13,8 @@ import { ContactHeader } from "@/components/contact/ContactHeader";
 import { SocialRow } from "@/components/contact/SocialRow";
 import { LocationBlock } from "@/components/contact/LocationBlock";
 import { ContactPhoto } from "@/components/contact/ContactPhoto";
-import { InquiryBlocks } from "@/components/contact/InquiryBlocks";
 import { CONTACT_HEADER, ENTER } from "@/components/contact/constants";
 import type {
-  ContactInquiries,
   ContactLocation,
   ContactPhoto as ContactPhotoData,
   ContactSocial,
@@ -26,14 +24,12 @@ interface ContactViewProps {
   socials: ContactSocial[];
   location: ContactLocation | null;
   photo: ContactPhotoData | null;
-  inquiries: ContactInquiries | null;
 }
 
 export default function ContactView({
   socials,
   location,
   photo,
-  inquiries,
 }: ContactViewProps) {
   const { t } = useTranslation();
   const root = useRef<HTMLElement>(null);
