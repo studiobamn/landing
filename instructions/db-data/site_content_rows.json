@@ -1,0 +1,60 @@
+[
+  { "key": "about-footer_meta_line1", "value": "\"EST. 2020  ·  MARCH\"" },
+  {
+    "key": "about-footer_meta_line2",
+    "value": "\"CARACAS  ·  BY APPOINTMENT\""
+  },
+  { "key": "about-headline_image", "value": "\"/img/about-headline.png\"" },
+  { "key": "about-image_a", "value": "\"1jwNDKnCTt534bh9TYEeeRd1763g-s7L_\"" },
+  { "key": "about-image_b", "value": "\"1yfgLCFSJcW2gSyDcGbI9-n165Cm30rfy\"" },
+  {
+    "key": "about-keywords",
+    "value": "[{\"text\": \"CHAOS\", \"weight\": \"bold\"}, {\"text\": \"FORM\", \"weight\": \"normal\"}, {\"text\": \"CURIOSITY\", \"weight\": \"bold\"}, {\"text\": \"PRECISION\", \"weight\": \"normal\"}]"
+  },
+  {
+    "key": "about-manifesto",
+    "value": "\"We use the beauty of chaos and give it form. Every project begins with the willingness to not know the answer yet — to build as if the ground were never promised to us.\""
+  },
+  {
+    "key": "about-place_list",
+    "value": "[{\"case\": \"upper\", \"text\": \"CARACAS\", \"weight\": \"bold\"}, {\"case\": \"mixed\", \"text\": \"Venezuela\", \"weight\": \"normal\"}, {\"case\": \"upper\", \"text\": \"RESIDENTIAL\", \"weight\": \"bold\"}, {\"case\": \"mixed\", \"text\": \"Commercial\", \"weight\": \"normal\"}, {\"case\": \"upper\", \"text\": \"OBJECTS\", \"weight\": \"bold\"}]"
+  },
+  {
+    "key": "about-scrawl_images",
+    "value": "[\"/img/about-stroke-1.png\", \"/img/about-stroke-2.png\"]"
+  },
+  { "key": "about-vertical_label_line1", "value": "\"BAMN\"" },
+  { "key": "about-vertical_label_line2", "value": "\"STUDIO COLLECTION\"" },
+  {
+    "key": "contact_inquiries",
+    "value": "{\"items\": [{\"text\": \"Please direct new project enquiries to studio@bamn.studio.\", \"label\": \"New Business/\"}, {\"text\": \"Send your portfolio to jobs@bamn.studio. Max 10MB, PDF only.\", \"label\": \"Job Applications/\"}], \"heading\": \"Social\"}"
+  },
+  {
+    "key": "contact_location",
+    "value": "{\"city\": \"Caracas\", \"email\": \"studiobamn@gmail.com\", \"phone\": \"+58 212 000 0000\", \"address\": [\"Av. Principal, Edif. Talud\", \"Caracas 1060\", \"Venezuela\"]}"
+  },
+  {
+    "key": "contact_photo",
+    "value": "{\"src\": \"https://picsum.photos/seed/bamn-principals/1000/1200?grayscale\", \"caption\": \"The studio — Caracas\"}"
+  },
+  {
+    "key": "contact_socials",
+    "value": "[{\"url\": \"https://instagram.com/studio.bamn\", \"label\": \"Instagram\"}, {\"url\": \"https://behance.net/studiobamn\", \"label\": \"Behance\"}, {\"url\": \"https://linkedin.com/company/studiobamn\", \"label\": \"LinkedIn\"}]"
+  },
+  {
+    "key": "home_covers",
+    "value": "{\"about\": \"https://picsum.photos/seed/bamn-about/560/760\", \"board\": \"https://picsum.photos/seed/bamn-board/600/420\", \"contact\": \"https://picsum.photos/seed/bamn-contact/560/760\", \"product\": \"https://picsum.photos/seed/bamn-product/560/760\", \"projects\": \"https://picsum.photos/seed/bamn-projects/560/760\"}"
+  },
+  {
+    "key": "home_poem",
+    "value": "{\"data\": \"we build as if\\nthe ground were never\\npromised to us. Ex quis cupidatat deserunt eiusmod consequat proident sint sint tempor. Quis minim aliquip sit duis incididunt ad. Do consectetur reprehenderit voluptate cupidatat. Sit exercitation esse nulla dolor eu minim velit excepteur aute fugiat quis. Do consectetur reprehenderit voluptate cupidatat. Sit exercitation esse nulla dolor eu minim velit excepteur aute fugiat quis. Do consectetur reprehenderit voluptate cupidatat. Sit exercitation esse nulla dolor eu minim velit excepteur aute fugiat quis. Do consectetur reprehenderit voluptate cupidatat. Sit exercitation esse nulla dolor eu minim velit excepteur aute fugiat quis.\"}"
+  },
+  {
+    "key": "product_line",
+    "value": "{\"volume\": \"Vol. 01\", \"lineName\": \"Cow Objects\", \"subtitle\": \"Products by BAMN, only this volumes is available\"}"
+  },
+  {
+    "key": "projects_quote",
+    "value": "{\"data\": \"We do not decorate the world.\\nWe take a position in it.\"}"
+  }
+]

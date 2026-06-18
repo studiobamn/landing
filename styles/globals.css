@@ -1,0 +1,212 @@
+@import "tailwindcss";
+
+/* Load the JS/TS config (Tailwind v4 does not auto-detect it).
+   Provides the bamn-* color utilities (bg-bamn-cream, text-bamn-red, …). */
+@config "../tailwind.config.ts";
+
+/* =========================================================
+   BAMN — brand tokens
+   Red is used rarely and deliberately (accents + Contact header).
+   Hex values flagged "confirm" in STACK.md — swap when finalized.
+   ========================================================= */
+:root {
+  --bamn-cream: #f5f2ec; /* background / paper — confirm exact value */
+  --bamn-black: #0a0a0a; /* text, logo */
+  --bamn-red: #e63419; /* signature accent — confirm exact value */
+  --bamn-muted: #a8a4a0; /* low-contrast text */
+
+  /* Fonts are placeholders (build-order step 9). Swap the stacks below
+     for next/font variables when the licensed typefaces land — the
+     `font-primary` / `font-secondary` utilities stay the same. */
+  --font-primary: "Bank Gothic", ui-sans-serif, system-ui, sans-serif; /* display */
+  --font-title: "AnkaCoder", ui-sans-serif, system-ui, sans-serif; /* display */
+  --font-secondary: "Aileron", ui-sans-serif, system-ui, sans-serif; /* body */
+  --font-written: "Priestacy", "Segoe Script", cursive; /* handwritten accent */
+}
+
+/* Expose tokens as Tailwind v4 utilities:
+   bg-cream, text-black, text-red, text-muted, font-primary, font-secondary */
+@theme inline {
+  --color-cream: var(--bamn-cream);
+  --color-black: var(--bamn-black);
+  --color-red: var(--bamn-red);
+  --color-muted: var(--bamn-muted);
+
+  --font-primary: var(--font-primary);
+  --font-secondary: var(--font-secondary);
+  --font-written: var(--font-written);
+}
+
+/* Primary display family — Bank Gothic (files in /public/font/primary).
+   Wired into --font-primary above, so the `font-primary` utility uses it. */
+@font-face {
+  font-family: "Bank Gothic";
+  src: url("/font/primary/Bank%20Gothic%20Light%20Regular.otf") format("opentype");
+  font-weight: 300;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Bank Gothic";
+  src: url("/font/primary/BankGothic%20Md%20BT.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Bank Gothic";
+  src: url("/font/primary/BankGothic%20Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+/* Title display family — AnkaCoder (files in /public/font/title).
+   Wired into --font-primary above, so the `font-primary` utility uses it. */
+@font-face {
+  font-family: "AnkaCoder";
+  src: url("/font/title/AnkaCoder-r.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "AnkaCoder";
+  src: url("/font/title/AnkaCoder-i.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "AnkaCoder";
+  src: url("/font/title/AnkaCoder-b.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "AnkaCoder";
+  src: url("/font/title/AnkaCoder-bi.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+/* Secondary body family — Aileron (files in /public/font/secondary).
+   Wired into --font-secondary above, so the `font-secondary` utility uses it. */
+@font-face {
+  font-family: "Aileron";
+  src: url("/font/secondary/Aileron-Thin.otf") format("opentype");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Aileron";
+  src: url("/font/secondary/Aileron-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Aileron";
+  src: url("/font/secondary/Aileron-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Aileron";
+  src: url("/font/secondary/Aileron-SemiBold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Aileron";
+  src: url("/font/secondary/Aileron-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Aileron";
+  src: url("/font/secondary/Aileron-Black.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+/* Written display family — Priestacy (files in /public/font/written).
+   Wired into --font-written above, so the `font-written` utility uses it. */
+@font-face {
+  font-family: "Priestacy";
+  src: url("/font/written/Priestacy.otf") format("opentype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+/* Custom site-wide cursor (36×36 png, hotspot centered).
+   Applied over interactive elements too so it stays consistent; text inputs
+   keep their caret, and tldraw's own drawing cursors on the board still win
+   (they're set inline, which outranks these class rules). */
+html,
+body,
+a,
+button,
+[role="button"],
+label,
+summary,
+select,
+.cursor-pointer {
+  cursor: url("../public/img/mouse.png") 10 10, auto;
+}
+
+body {
+  background-color: var(--bamn-cream); /* fallback / shows through transparency */
+  background-image: url("/img/paper.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* full-bleed, stays put on scroll */
+  color: var(--bamn-black);
+  font-family: var(--font-secondary), Arial, Helvetica, sans-serif;
+}
+
+/* Custom scrollbars — translucent BAMN red, site-wide. */
+.scroll-bar-hidde {
+  scrollbar-width: none;
+}
+.scroll-bar {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--bamn-red) 55%, transparent)
+    transparent;
+}
+.scroll-bar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.scroll-bar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-bar::-webkit-scrollbar-thumb {
+  background-color: color-mix(in srgb, var(--bamn-red) 45%, transparent);
+  border-radius: 9999px;
+}
+.scroll-bar::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in srgb, var(--bamn-red) 70%, transparent);
+}
+
+/* Board — transparent tldraw canvas so the paper texture shows through. */
+.board-canvas .tl-background {
+  background-color: transparent !important;
+}
+.board-canvas .tl-container {
+  --color-background: transparent;
+  --color-low: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

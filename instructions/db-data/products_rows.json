@@ -1,0 +1,26 @@
+[
+  {
+    "id": "07d44237-56ec-405f-9d8b-f91d38d62ff8",
+    "volume": "Vol. 01",
+    "line_name": "Objects in Steel",
+    "name": "Bend Chair",
+    "description": "A single length of tube bent into a seat — one continuous gesture, no joints to hide.",
+    "materials": "Powder-coated steel",
+    "dimensions": "H 80 × W 45 × D 50 cm",
+    "sort_order": 1,
+    "published": true,
+    "created_at": "2026-06-16 22:06:18.412518+00"
+  },
+  {
+    "id": "7d663e63-622b-4bbf-a891-5c287a52338c",
+    "volume": "Vol. 01",
+    "line_name": "Objects in Steel",
+    "name": "Loop Rug",
+    "description": "A hand-tufted wool rug whose pattern is a single looping line, drawn once and never lifted.",
+    "materials": "Hand-tufted wool",
+    "dimensions": "240 × 170 cm",
+    "sort_order": 2,
+    "published": true,
+    "created_at": "2026-06-16 22:06:18.412518+00"
+  }
+]
