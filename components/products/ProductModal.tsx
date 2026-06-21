@@ -29,7 +29,6 @@ export function ProductModal({
   const { t } = useTranslation();
   const slug = pSlug(product.name);
   const imgRef = useRef<HTMLImageElement>(null);
-  const dragStartX = useRef<number | null>(null);
   const [variant, setVariant] = useState(0);
   const [formOpen, setFormOpen] = useState(false);
   const [sending, setSending] = useState(false);
@@ -57,35 +56,6 @@ export function ProductModal({
       onComplete: () => setVariant(i),
     });
   };
-
-  function resolveSwipe(dx: number) {
-    const THRESHOLD = 40;
-    if (dx < -THRESHOLD) showVariant((variant + 1) % variants.length);
-    else if (dx > THRESHOLD)
-      showVariant((variant - 1 + variants.length) % variants.length);
-  }
-
-  function handleMouseDown(e: React.MouseEvent) {
-    dragStartX.current = e.clientX;
-  }
-
-  function handleMouseUp(e: React.MouseEvent) {
-    if (dragStartX.current === null) return;
-    const dx = e.clientX - dragStartX.current;
-    dragStartX.current = null;
-    resolveSwipe(dx);
-  }
-
-  function handleTouchStart(e: React.TouchEvent) {
-    dragStartX.current = e.touches[0].clientX;
-  }
-
-  function handleTouchEnd(e: React.TouchEvent) {
-    if (dragStartX.current === null) return;
-    const dx = e.changedTouches[0].clientX - dragStartX.current;
-    dragStartX.current = null;
-    resolveSwipe(dx);
-  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -128,13 +98,7 @@ export function ProductModal({
 
       {/* Left — image + swatches */}
       <div>
-        <div
-          className="aspect-[4/5] w-full select-none overflow-hidden"
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
+        <div className="relative aspect-[4/5] w-full select-none overflow-hidden">
           {src ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -149,6 +113,18 @@ export function ProductModal({
               {product.name}
             </div>
           )}
+          {variants.length > 1 && (
+            <>
+              <div
+                className="absolute inset-y-0 left-0 w-1/2 cursor-pointer"
+                onClick={() => showVariant((variant - 1 + variants.length) % variants.length)}
+              />
+              <div
+                className="absolute inset-y-0 right-0 w-1/2 cursor-pointer"
+                onClick={() => showVariant((variant + 1) % variants.length)}
+              />
+            </>
+          )}
         </div>
         {variants.length > 1 && (
           <div className="mt-4 flex gap-3">
@@ -157,7 +133,9 @@ export function ProductModal({
                 key={v.id}
                 type="button"
                 onClick={() => showVariant(i)}
-                aria-label={v.label ?? t("productModal.variant", { number: i + 1 })}
+                aria-label={
+                  v.label ?? t("productModal.variant", { number: i + 1 })
+                }
                 className={`h-3 w-3 rounded-full border border-bamn-black transition-colors ${
                   i === variant ? "bg-bamn-black" : "bg-transparent"
                 }`}
@@ -186,7 +164,9 @@ export function ProductModal({
           {i18n.exists(`db.products.${slug}.materials`) && (
             <div className="flex gap-2">
               <dt className="uppercase">{t("productModal.materials")}</dt>
-              <dd className="text-bamn-black/70">{t(`db.products.${slug}.materials`)}</dd>
+              <dd className="text-bamn-black/70">
+                {t(`db.products.${slug}.materials`)}
+              </dd>
             </div>
           )}
           {product.dimensions && (
@@ -197,50 +177,54 @@ export function ProductModal({
           )}
         </dl>
 
-        <div className="mt-auto pt-8">
-          {!formOpen ? (
-            <button
-              type="button"
-              onClick={() => setFormOpen(true)}
-              className="font-secondary w-full cursor-pointer border border-bamn-black px-4 py-3 text-xs tracking-widest uppercase transition-colors hover:bg-bamn-black hover:text-bamn-cream"
-            >
-              {t("productModal.getInTouch")}
-            </button>
-          ) : sent ? (
-            <p className="font-secondary text-sm text-bamn-black">
-              {t("productModal.thankYou", { productName: product.name })}
-            </p>
-          ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-              <input
-                name="name"
-                placeholder={t("form.name")}
-                required
-                className="font-secondary border border-bamn-muted/50 bg-transparent px-3 py-2 text-sm outline-none focus:border-bamn-black"
-              />
-              <input
-                name="email"
-                type="email"
-                placeholder={t("form.email")}
-                required
-                className="font-secondary border border-bamn-muted/50 bg-transparent px-3 py-2 text-sm outline-none focus:border-bamn-black"
-              />
-              <textarea
-                name="message"
-                rows={3}
-                defaultValue={t("productModal.interested", { productName: product.name })}
-                className="font-secondary resize-none border border-bamn-muted/50 bg-transparent px-3 py-2 text-sm outline-none focus:border-bamn-black"
-              />
+        {product.available && (
+          <div className="mt-auto pt-8">
+            {!formOpen ? (
               <button
-                type="submit"
-                disabled={sending}
-                className="font-secondary cursor-pointer border border-bamn-black px-4 py-3 text-xs tracking-widest uppercase transition-colors hover:bg-bamn-black hover:text-bamn-cream disabled:opacity-50"
+                type="button"
+                onClick={() => setFormOpen(true)}
+                className="font-secondary w-full cursor-pointer border border-bamn-black px-4 py-3 text-xs tracking-widest uppercase transition-colors hover:bg-bamn-black hover:text-bamn-cream"
               >
-                {sending ? t("form.sending") : t("form.sendInquiry")}
+                {t("productModal.getInTouch")}
               </button>
-            </form>
-          )}
-        </div>
+            ) : sent ? (
+              <p className="font-secondary text-sm text-bamn-black">
+                {t("productModal.thankYou", { productName: product.name })}
+              </p>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                <input
+                  name="name"
+                  placeholder={t("form.name")}
+                  required
+                  className="font-secondary border border-bamn-muted/50 bg-transparent px-3 py-2 text-sm outline-none focus:border-bamn-black"
+                />
+                <input
+                  name="email"
+                  type="email"
+                  placeholder={t("form.email")}
+                  required
+                  className="font-secondary border border-bamn-muted/50 bg-transparent px-3 py-2 text-sm outline-none focus:border-bamn-black"
+                />
+                <textarea
+                  name="message"
+                  rows={3}
+                  defaultValue={t("productModal.interested", {
+                    productName: product.name,
+                  })}
+                  className="font-secondary resize-none border border-bamn-muted/50 bg-transparent px-3 py-2 text-sm outline-none focus:border-bamn-black"
+                />
+                <button
+                  type="submit"
+                  disabled={sending}
+                  className="font-secondary cursor-pointer border border-bamn-black px-4 py-3 text-xs tracking-widest uppercase transition-colors hover:bg-bamn-black hover:text-bamn-cream disabled:opacity-50"
+                >
+                  {sending ? t("form.sending") : t("form.sendInquiry")}
+                </button>
+              </form>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -4,8 +4,7 @@
 // Static by design: external links + mailto only. The only motion is the calm,
 // staggered GSAP entry (and its reverse on exit). One full-scale red header.
 
-import { useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useRef } from "react";
 import gsap from "gsap";
 import { useViewTransition } from "@/hooks/useTransitionRouter";
 import { HomeIcon } from "@/components/HomeIcon";
@@ -13,57 +12,37 @@ import { ContactHeader } from "@/components/contact/ContactHeader";
 import { SocialRow } from "@/components/contact/SocialRow";
 import { LocationBlock } from "@/components/contact/LocationBlock";
 import { ContactPhoto } from "@/components/contact/ContactPhoto";
+import { ContactForm } from "@/components/contact/ContactForm";
 import { CONTACT_HEADER, ENTER } from "@/components/contact/constants";
+import type { ContactFormConfig } from "@/components/contact/ContactForm";
 import type {
   ContactLocation,
   ContactPhoto as ContactPhotoData,
   ContactSocial,
 } from "@/types";
+import { LanguageSwitcher } from "../LanguageSwitcher";
 
 interface ContactViewProps {
   socials: ContactSocial[];
   location: ContactLocation | null;
   photo: ContactPhotoData | null;
+  formConfig: ContactFormConfig;
 }
 
 export default function ContactView({
   socials,
   location,
   photo,
+  formConfig,
 }: ContactViewProps) {
-  const { t } = useTranslation();
   const root = useRef<HTMLElement>(null);
-  const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    setSending(true);
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: data.get("name"),
-          email: data.get("email"),
-          message: data.get("message"),
-        }),
-      });
-      setSent(res.ok);
-    } catch {
-      setSent(false);
-    } finally {
-      setSending(false);
-    }
-  }
   const headerRef = useRef<HTMLHeadingElement>(null);
   const socialRef = useRef<HTMLDivElement>(null);
   const locationRef = useRef<HTMLDivElement>(null);
   const photoRef = useRef<HTMLDivElement>(null);
   const inquiriesRef = useRef<HTMLDivElement>(null);
   const homeIconRef = useRef<HTMLButtonElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
+  const formRef = useRef<HTMLDivElement>(null);
 
   useViewTransition({
     enter: () => {
@@ -105,18 +84,6 @@ export default function ContactView({
         { autoAlpha: 1, x: 0, duration: ENTER.photo, ease: "power2.out" },
         ENTER.photoAt,
       );
-      tl.fromTo(
-        "[data-inquiry]",
-        { autoAlpha: 0, y: 16 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: ENTER.inquiry,
-          ease: "power2.out",
-          stagger: ENTER.inquiryStagger,
-        },
-        ENTER.inquiriesAt,
-      );
       return tl;
     },
     exit: () =>
@@ -150,17 +117,17 @@ export default function ContactView({
       <div
         // ref={dividerRef}
         data-divider
-        className="absolute top-0 right-[8vw] z-40 bg-bamn-muted/50 w-[2px] h-screen"
+        className="absolute top-0 right-[8vw] z-40 bg-bamn-muted/50 w-[2px] h-full"
       />
       <div
         // ref={dividerRef}
         data-divider
-        className="absolute top-0 right-[13vw]  bg-bamn-muted/50 w-[2px] h-screen"
+        className="absolute top-0 right-[13vw]  bg-bamn-muted/50 w-[2px] h-full"
       />
       <div
         // ref={dividerRef}
         data-divider
-        className="absolute top-0 left-[5vw]  bg-bamn-muted/50 w-[2px] h-screen"
+        className="absolute top-0 left-[5vw]  bg-bamn-muted/50 w-[2px] h-full"
       />
       {/* <div className="absolute top-[220px] left-0 bg-bamn-muted/50 w-screen h-[2px]" /> */}
       <HomeIcon ref={homeIconRef} />
@@ -185,44 +152,7 @@ export default function ContactView({
             data-divider
             className="mt-6 h-px w-[92vw] top-[200px]  -left-[6vw] absolute origin-left z-40 bg-bamn-muted/40"
           />
-          {sent ? (
-            <p className="font-secondary text-sm text-bamn-black">
-              {t("contact.thankYou")}
-            </p>
-          ) : (
-            <form
-              ref={formRef}
-              onSubmit={handleSubmit}
-              className="flex flex-col gap-3"
-            >
-              <input
-                name="name"
-                placeholder={t("form.name")}
-                required
-                className="font-secondary border border-bamn-muted/50 bg-transparent px-3 py-2 text-sm outline-none focus:border-bamn-black"
-              />
-              <input
-                name="email"
-                type="email"
-                placeholder={t("form.email")}
-                required
-                className="font-secondary border border-bamn-muted/50 bg-transparent px-3 py-2 text-sm outline-none focus:border-bamn-black"
-              />
-              <textarea
-                name="message"
-                rows={7}
-                placeholder={t("form.message")}
-                className="font-secondary border border-bamn-muted/50 bg-transparent px-3 py-2 text-sm outline-none focus:border-bamn-black"
-              />
-              <button
-                type="submit"
-                disabled={sending}
-                className="font-secondary cursor-pointer border border-bamn-black px-4 py-3 text-xs tracking-widest uppercase transition-colors hover:bg-bamn-black hover:text-bamn-cream disabled:opacity-50"
-              >
-                {sending ? t("form.sending") : t("form.sendInquiry")}
-              </button>
-            </form>
-          )}
+          <ContactForm ref={formRef} config={formConfig} />
           {/* {inquiries && (
             <InquiryBlocks ref={inquiriesRef} inquiries={inquiries} />
           )} */}

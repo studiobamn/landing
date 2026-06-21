@@ -83,7 +83,7 @@ export function ProductCard({ product, onOpen }: ProductCardProps) {
             src={src}
             alt={displayName}
             draggable={false}
-            className="h-full w-full object-cover"
+            className={`h-full w-full object-cover${!product.available ? " grayscale" : ""}`}
           />
         ) : (
           <span className="flex h-full w-full items-center justify-center bg-bamn-muted/20 text-xs text-bamn-muted">
@@ -95,6 +95,12 @@ export function ProductCard({ product, onOpen }: ProductCardProps) {
       <span className="font-primary mt-2 text-md md:text-lg tracking-wide text-bamn-black">
         {displayName}
       </span>
+
+      {!product.available && (
+        <span className="font-secondary mt-1 text-[10px] tracking-widest uppercase text-bamn-red">
+          {"Sold Out"}
+        </span>
+      )}
 
       {variants.length > 1 && (
         <div className="mt-2 flex gap-2">

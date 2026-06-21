@@ -52,7 +52,7 @@ export function AboutPhotos({
         style={{
           ...(isMobile
             ? { top: "33%", left: "44%", width: "44%" }
-            : { top: "35%", left: "50%", width: "22%" }),
+            : { top: "40%", left: "50%", width: "18%" }),
           aspectRatio: "3 / 4",
           objectFit: "cover",
         }}

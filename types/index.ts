@@ -37,8 +37,18 @@ export interface ProjectImage {
   height: number | null;
 }
 
+export interface ProjectSection {
+  id: string;
+  project_id: string;
+  text: string | null;
+  img: string;
+  img_position: "top" | "bottom" | "left" | "right";
+  sort_order: number;
+}
+
 export interface ProjectWithImages extends Project {
   images: ProjectImage[];
+  sections: ProjectSection[];
 }
 
 export interface Product {
@@ -48,6 +58,7 @@ export interface Product {
   dimensions: string | null;
   sort_order: number;
   published: boolean;
+  available: boolean;
   created_at: string;
 }
 
@@ -68,6 +79,11 @@ export interface ProductVariant {
 
 export interface ProductWithVariants extends Product {
   variants: ProductVariant[];
+}
+
+export interface ProductsByVolume {
+  vol: string;
+  products: ProductWithVariants[];
 }
 
 /** Current product line label, stored in site_content under 'product_line'. */
@@ -129,6 +145,11 @@ export interface AboutKeyword {
   textEs: string;
   weight: "bold" | "normal";
 }
+export interface AboutSection {
+  text: string;
+  imgUrl: string;
+  imgPosition: "top" | "bottom" | "left" | "right";
+}
 export interface AboutContent {
   headline_image: string;
   vertical_label_line1: string;
@@ -137,6 +158,7 @@ export interface AboutContent {
   place_list: AboutPlaceItem[];
   keywords: AboutKeyword[];
   scrawl_images: string[];
+  sections: AboutSection[];
 }
 
 // --- Contact view (stored in site_content as separate keys) ---
@@ -174,4 +196,5 @@ export interface HomeCovers {
   about?: string;
   contact?: string;
   board?: string;
+  home?: string;
 }

@@ -8,8 +8,11 @@ import { Resend } from "resend";
 interface ContactPayload {
   name?: string;
   email?: string;
+  phone?: string;
   message?: string;
   product?: string; // product name, pre-filled from the Product CTA
+  projectType?: string; // "new" | "refactor"
+  projectCategory?: string[]; // e.g. "house", "kitchen", etc.
 }
 
 export async function POST(req: Request) {
@@ -30,7 +33,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid JSON." }, { status: 400 });
   }
 
-  const { name, email, message, product } = body;
+  const { name, email, phone, message, product, projectType, projectCategory } =
+    body;
   if (!email || !message) {
     return NextResponse.json(
       { error: "email and message are required." },
@@ -41,17 +45,22 @@ export async function POST(req: Request) {
   const resend = new Resend(apiKey);
   const subject = product
     ? `BAMN inquiry — ${product}`
-    : "BAMN LANDING CONTACT";
+    : projectType
+      ? `BAMN inquiry — ${projectType}${projectCategory ? ` / ${projectCategory}` : ""}`
+      : "BAMN LANDING CONTACT";
 
   const { error } = await resend.emails.send({
     from,
-    to, // studio inbox; adjust if a dedicated address is used
+    to,
     replyTo: email,
     subject,
     text: [
       product ? `Product: ${product}` : null,
+      projectType ? `Project type: ${projectType}` : null,
+      projectCategory ? `Category: ${projectCategory.join(", ")}` : null,
       name ? `Name: ${name}` : null,
       `Email: ${email}`,
+      phone ? `Whatsapp: ${phone}` : null,
       "",
       message,
     ]

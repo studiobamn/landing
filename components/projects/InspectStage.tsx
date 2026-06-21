@@ -14,6 +14,7 @@ import { ProjectPhrases } from "./ProjectPhrases";
 import type { ProjectWithImages } from "@/types";
 import { resolveMediaUrl } from "@/lib/drive";
 import useMobile from "@/hooks/useMobile";
+import { CustomComp } from "@/components/CustomComp";
 
 interface InspectStageProps {
   project: ProjectWithImages;
@@ -60,7 +61,10 @@ export function InspectStage({
         <MainInfo project={project} />
         <ProjectInfoImgs project={project} />
         <div className="w-full flex justify-end">
-          <ProjectPhrases phrases={project.phrases ?? []} slug={project.slug ?? ""} />
+          <ProjectPhrases
+            phrases={project.phrases ?? []}
+            slug={project.slug ?? ""}
+          />
         </div>
         <div className="h-px w-full bg-bamn-muted" />
         <div className="flex flex-col md:flex-row gap-10 mt-5">
@@ -81,7 +85,9 @@ export function InspectStage({
                   </p>
                   <p className="font-secondary text-xs tracking-wide text-bamn-red">
                     {project.credits
-                      ? t(`db.projectRoles.${project.credits[name]}`, { defaultValue: project.credits[name] })
+                      ? t(`db.projectRoles.${project.credits[name]}`, {
+                          defaultValue: project.credits[name],
+                        })
                       : ""}
                   </p>
                 </div>
@@ -102,6 +108,21 @@ export function InspectStage({
               className="object-cover"
               style={{ width: "100%", height: isMobile ? 200 : 300 }}
             />
+          </div>
+        )}
+        {project.sections.length > 0 && (
+          <div className="flex flex-col gap-18 mt-16">
+            {project.sections.map((section) => {
+              const imgUrl = resolveMediaUrl(section.img) ?? section.img;
+              return (
+                <CustomComp
+                  key={section.id}
+                  imgUrl={imgUrl}
+                  text={section.text}
+                  imgPosition={section.img_position}
+                />
+              );
+            })}
           </div>
         )}
       </div>

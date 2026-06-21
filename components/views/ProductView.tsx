@@ -18,10 +18,10 @@ import {
   prepareBamned,
 } from "@/components/products/bamnedDraw";
 import { GRID_STAGGER } from "@/components/products/constants";
-import type { ProductLine, ProductWithVariants } from "@/types";
+import type { ProductLine, ProductsByVolume } from "@/types";
 
 interface ProductViewProps {
-  products: ProductWithVariants[];
+  products: ProductsByVolume[];
   line: ProductLine | null;
 }
 
@@ -29,8 +29,6 @@ export default function ProductView({ products, line }: ProductViewProps) {
   const root = useRef<HTMLElement>(null);
   const headerRef = useRef<SVGSVGElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
-  const volumeRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLButtonElement>(null);
   const homeIconRef = useRef<HTMLButtonElement | null>(null);
@@ -70,9 +68,9 @@ export default function ProductView({ products, line }: ProductViewProps) {
         headerEnd,
       );
       tl.fromTo(
-        volumeRef.current,
+        "[data-vol-label]",
         { autoAlpha: 0, y: 10 },
-        { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" },
+        { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out", stagger: 0.1 },
         0.8,
       );
       // Grid staggers in once the header draw is ~70% complete.
@@ -110,7 +108,12 @@ export default function ProductView({ products, line }: ProductViewProps) {
           0,
         );
         tl.to(
-          [headerRef.current, subtitleRef.current, volumeRef.current],
+          [headerRef.current, subtitleRef.current],
+          { autoAlpha: 0, duration: 0.3, ease: "power2.in" },
+          0,
+        );
+        tl.to(
+          "[data-vol-label]",
           { autoAlpha: 0, duration: 0.3, ease: "power2.in" },
           0,
         );
@@ -137,25 +140,28 @@ export default function ProductView({ products, line }: ProductViewProps) {
         )}
       </div>
 
-      {/* Volume label */}
-      <div ref={volumeRef} className="mt-6 mb-15 flex justify-center">
-        <p className="font-secondary text-2xl tracking-wide text-bamn-black text-center ">
-          {line ? `${line.volume} ` : t("products.volFallback")}
-          <span className="text-bamn-muted">
-            {line ? `/ ${t("db.productLine.lineName")}` : ""}
-          </span>
-        </p>
-      </div>
-
-      {/* Grid */}
+      {/* Volumes — one section per grouped volume */}
       {products.length === 0 ? (
         <p className="font-secondary text-sm text-bamn-muted">
           {t("products.noProducts")}
         </p>
       ) : (
-        <div ref={gridRef}>
-          <ProductGrid products={products} onOpen={open} />
-        </div>
+        products.map(({ vol, products: volProducts }) => {
+          const [volNum, volName] = vol.split(" / ");
+          return (
+            <div key={vol} className="mb-32">
+              <div data-vol-label className="mt-6 mb-15 flex justify-end">
+                <p className="font-secondary text-2xl tracking-wide text-bamn-black text-center">
+                  {volNum}{" "}
+                  {volName && (
+                    <span className="text-bamn-muted">/ {volName}</span>
+                  )}
+                </p>
+              </div>
+              <ProductGrid products={volProducts} onOpen={open} />
+            </div>
+          );
+        })
       )}
 
       {/* Expand-from-card modal */}

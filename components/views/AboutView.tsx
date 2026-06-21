@@ -21,6 +21,7 @@ import { FooterMeta } from "@/components/about/FooterMeta";
 import { Scrawls } from "@/components/about/Scrawls";
 import useMobile from "@/hooks/useMobile";
 import type { AboutContent } from "@/types";
+import { CustomComp } from "../CustomComp";
 
 interface AboutViewProps {
   content: AboutContent | null;
@@ -201,46 +202,63 @@ export default function AboutView({ content }: AboutViewProps) {
   }
 
   return (
-    <main ref={root} className="relative h-screen w-full overflow-hidden">
-      <HomeIcon ref={homeIconRef} />
+    <div className="pb-20">
+      <main ref={root} className="relative h-screen w-full overflow-hidden">
+        <HomeIcon ref={homeIconRef} />
 
-      <GuideLines ref={guideRef} />
-      <Headline
-        ref={headlineRef}
-        src={resolveMediaUrl(content.headline_image) ?? ""}
-        isMobile={isMobile}
-      />
-      <VerticalLabel
-        ref={labelRef}
-        line1={content.vertical_label_line1}
-        isMobile={isMobile}
-      />
-      <AboutPhotos
-        imageA={content.image_a}
-        imageB={content.image_b}
-        imageARef={imageARef}
-        imageBRef={imageBRef}
-        isMobile={isMobile}
-      />
-      <PlaceList
-        ref={placeRef}
-        items={content.place_list}
-        isMobile={isMobile}
-      />
-      <Manifesto ref={manifestoRef} isMobile={isMobile} />
-      <Keywords
-        ref={keywordsRef}
-        items={content.keywords}
-        isMobile={isMobile}
-      />
-      <FooterMeta ref={footerRef} isMobile={isMobile} />
-      <Scrawls
-        left={content.scrawl_images?.[0]}
-        right={content.scrawl_images?.[1]}
-        leftRef={scrawlLeftRef}
-        rightRef={scrawlRightRef}
-        isMobile={isMobile}
-      />
-    </main>
+        <GuideLines ref={guideRef} />
+        <Headline
+          ref={headlineRef}
+          src={resolveMediaUrl(content.headline_image) ?? ""}
+          isMobile={isMobile}
+        />
+        <VerticalLabel
+          ref={labelRef}
+          line1={content.vertical_label_line1}
+          isMobile={isMobile}
+        />
+        <AboutPhotos
+          imageA={content.image_a}
+          imageB={content.image_b}
+          imageARef={imageARef}
+          imageBRef={imageBRef}
+          isMobile={isMobile}
+        />
+        <PlaceList
+          ref={placeRef}
+          items={content.place_list}
+          isMobile={isMobile}
+        />
+        <Manifesto ref={manifestoRef} isMobile={isMobile} />
+        <Keywords
+          ref={keywordsRef}
+          items={content.keywords}
+          isMobile={isMobile}
+        />
+        <FooterMeta ref={footerRef} isMobile={isMobile} />
+        <Scrawls
+          left={content.scrawl_images?.[0]}
+          right={content.scrawl_images?.[1]}
+          leftRef={scrawlLeftRef}
+          rightRef={scrawlRightRef}
+          isMobile={isMobile}
+        />
+      </main>
+      {content.sections.length > 0 && (
+        <div className="flex flex-col gap-18">
+          {content.sections.map((section) => {
+            const imgUrl = resolveMediaUrl(section.imgUrl) ?? section.imgUrl;
+            return (
+              <CustomComp
+                key={section.text}
+                imgUrl={imgUrl}
+                text={section.text}
+                imgPosition={section.imgPosition}
+              />
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }

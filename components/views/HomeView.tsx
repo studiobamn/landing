@@ -23,15 +23,17 @@ import {
   shuffle,
   type ViewKey,
 } from "@/components/home/constants";
-import type { HomeCovers, HomePoem } from "@/types";
+import type { ContactSocial, HomeCovers, HomePoem } from "@/types";
 import { LanguageSwitcher } from "../LanguageSwitcher";
+import HomeFooter from "../home/HomeFooter";
 
 interface HomeViewProps {
   poem: HomePoem | null;
   covers: HomeCovers | null;
+  socials: ContactSocial[] | null;
 }
 
-export default function HomeView({ poem, covers }: HomeViewProps) {
+export default function HomeView({ poem, covers, socials }: HomeViewProps) {
   const { navigate } = useTransitionRouter();
 
   // Fresh shuffle per mount (= per page load and per return from a sub-view).
@@ -71,6 +73,12 @@ export default function HomeView({ poem, covers }: HomeViewProps) {
           ease: "power1.out",
         },
       );
+      tl.fromTo(
+        "[data-drop]",
+        { autoAlpha: 0 },
+        { autoAlpha: 1, duration: 0.2, ease: "power2.out" },
+        0.1,
+      );
       return tl;
     },
     exit: () => {
@@ -80,6 +88,11 @@ export default function HomeView({ poem, covers }: HomeViewProps) {
         poemRef.current,
         { y: 80, autoAlpha: 0, duration: ABYSS.poemFall, ease: "power2.in" },
         0,
+      );
+      tl.to(
+        "[data-drop]",
+        { autoAlpha: 0, duration: 0.15, ease: "power2.in" },
+        0.4,
       );
       tl.to(
         surfaceRef.current,
@@ -112,6 +125,9 @@ export default function HomeView({ poem, covers }: HomeViewProps) {
       </div>
       <div className="fixed top-1 left-2 z-50">
         <LanguageSwitcher />
+      </div>
+      <div style={{ zIndex: 20 }} className="fixed bottom-1 right-0 w-full">
+        <HomeFooter socials={socials} />
       </div>
     </div>
   );

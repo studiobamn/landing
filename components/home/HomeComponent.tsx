@@ -66,21 +66,23 @@ export const HomeComponent = forwardRef<HTMLDivElement, HomeComponentProps>(
       >
         {src ? (
           // Drive/external media uses raw <img> by design (STACK.md).
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={src}
-            alt={label}
-            draggable={false}
-            className="pointer-events-none h-full w-full object-cover"
-          />
+          <div className="grayscale hover:grayscale-0 transition-all duration-700 h-full w-full">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={src}
+              alt={label}
+              draggable={false}
+              className="pointer-events-none  h-full w-full object-cover"
+            />
+          </div>
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-muted/30 text-xs text-muted">
             {label}
           </div>
         )}
-        <span className="font-primary bg-bamn-muted/50 font-semibold backdrop-blur-md tracking-[3px] h-full flex justify-center items-center pointer-events-none absolute py-2 inset-x-0 bottom-0 text-center text-lg text-bamn-black uppercase opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+        {/* <span className="font-primary bg-bamn-muted/50 font-semibold backdrop-blur-md tracking-[3px] h-full flex justify-center items-center pointer-events-none absolute py-2 inset-x-0 bottom-0 text-center text-lg text-bamn-black uppercase opacity-0 transition-opacity duration-500 group-hover:opacity-100">
           {label}
-        </span>
+        </span> */}
 
         <span
           className={`absolute text-bamn-black/50 md:text-sm ${textPosition}`}
@@ -91,11 +93,7 @@ export const HomeComponent = forwardRef<HTMLDivElement, HomeComponentProps>(
           className={`absolute text-bamn-black/50 text-md md:text-sm ${numberPosition}`}
         >
           {`(${num}) `}
-          {isMobile && (
-            <>
-              <span className="">{label}</span>
-            </>
-          )}
+          <span className="">{label}</span>
         </span>
       </div>
     );

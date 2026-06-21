@@ -1,7 +1,7 @@
 "use client";
 
 // Loading view — shown while the board snapshot is being fetched from the
-// database (and tldraw initializes). Three dots bounce in a GSAP wave.
+// database (and Excalidraw initializes). Three dots bounce in a GSAP wave.
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";

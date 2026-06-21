@@ -96,15 +96,31 @@ export function ProjectGallery({
       {/* Big image — slid in/out by useProjectsInspect via imageRef. */}
       <div ref={imageRef} className="relative w-full">
         {activeSrc ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            ref={bigImgRef}
-            src={activeSrc}
-            alt=""
-            draggable={false}
-            height={400}
-            className="block w-full object-cover"
-          />
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              ref={bigImgRef}
+              src={activeSrc}
+              alt=""
+              draggable={false}
+              style={{ height: isMobile ? 400 : 600 }}
+              className="block w-full select-none object-cover"
+            />
+            {items.length > 1 && (
+              <>
+                <div
+                  className="absolute inset-y-0 left-0 w-1/2 cursor-pointer"
+                  onClick={() =>
+                    select((active - 1 + items.length) % items.length)
+                  }
+                />
+                <div
+                  className="absolute inset-y-0 right-0 w-1/2 cursor-pointer"
+                  onClick={() => select((active + 1) % items.length)}
+                />
+              </>
+            )}
+          </>
         ) : (
           <div className="flex h-[40vh] w-full items-center justify-center bg-bamn-muted/20 text-sm text-bamn-muted">
             No image

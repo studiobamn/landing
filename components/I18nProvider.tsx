@@ -29,7 +29,11 @@ const CACHE_KEY = "bamn_i18n_cache";
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 const LANG_KEY = "bamn_lang";
 
-type LangRow = { label: string; language: string; content: Record<string, unknown> };
+type LangRow = {
+  label: string;
+  language: string;
+  content: Record<string, unknown>;
+};
 
 async function fetchFromSupabase(): Promise<LangRow[] | null> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -37,7 +41,7 @@ async function fetchFromSupabase(): Promise<LangRow[] | null> {
   if (!url || !key) return null;
   try {
     const res = await fetch(
-      `${url}/rest/v1/languages?select=label,language,content`,
+      `${url}/rest/v1/languages?select=label,language,content&order=id.asc`,
       { headers: { apikey: key, Authorization: `Bearer ${key}` } },
     );
     if (!res.ok) return null;
@@ -100,7 +104,10 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       const rows = await fetchFromSupabase();
       if (rows && rows.length > 0) {
         loadInto(rows);
-        localStorage.setItem(CACHE_KEY, JSON.stringify({ rows, ts: Date.now() }));
+        localStorage.setItem(
+          CACHE_KEY,
+          JSON.stringify({ rows, ts: Date.now() }),
+        );
         setLangs(rows.map(({ label, language }) => ({ label, language })));
         const lang = rows.find((r) => r.label === savedLang)
           ? savedLang

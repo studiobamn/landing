@@ -8,7 +8,10 @@ export function LanguageSwitcher() {
   if (langs.length <= 1) return null;
 
   return (
-    <div className="font-secondary font-bold flex items-center gap-2 text-xs tracking-widest uppercase">
+    <div
+      className="font-secondary font-bold flex items-center gap-2 text-xs tracking-widest uppercase"
+      data-drop
+    >
       {langs.map((lang, i) => (
         <span key={lang.label} className="flex items-center gap-2">
           <button

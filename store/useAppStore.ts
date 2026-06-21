@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import type { HomeCovers } from "@/types";
 
 export type NavigationState = "idle" | "exiting" | "entering";
 
@@ -16,6 +17,10 @@ interface AppState {
   // product inquiry handoff (Product → Contact, if ever used)
   pendingProductInquiry?: string;
   setPendingProductInquiry: (name?: string) => void;
+
+  // home cover images, fetched once at layout level
+  homeCovers: HomeCovers | null;
+  setHomeCovers: (covers: HomeCovers) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -30,4 +35,7 @@ export const useAppStore = create<AppState>((set) => ({
   pendingProductInquiry: undefined,
   setPendingProductInquiry: (pendingProductInquiry) =>
     set({ pendingProductInquiry }),
+
+  homeCovers: null,
+  setHomeCovers: (homeCovers) => set({ homeCovers }),
 }));

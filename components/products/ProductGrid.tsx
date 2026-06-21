@@ -13,7 +13,10 @@ interface ProductGridProps {
 
 export function ProductGrid({ products, onOpen }: ProductGridProps) {
   return (
-    <div className="flex w-full flew-wrap gap-[100px] justify-start">
+    <div
+      style={{ flexWrap: "wrap" }}
+      className="flex w-full gap-[100px] justify-end"
+    >
       {products.map((p) => (
         <ProductCard key={p.id} product={p} onOpen={onOpen} />
       ))}

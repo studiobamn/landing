@@ -196,13 +196,18 @@ body {
   background-color: color-mix(in srgb, var(--bamn-red) 70%, transparent);
 }
 
-/* Board — transparent tldraw canvas so the paper texture shows through. */
-.board-canvas .tl-background {
-  background-color: transparent !important;
+/* Board — transparent Excalidraw canvas so the paper texture shows through. */
+.board-canvas .excalidraw,
+.board-canvas .excalidraw .canvas {
+  background: transparent !important;
+  --island-bg-color: var(--bamn-cream);
 }
-.board-canvas .tl-container {
-  --color-background: transparent;
-  --color-low: transparent;
+.excalidraw .sidebar{
+  z-index: 10000 !important;
+}
+
+.excalidraw .library-menu-items-container{
+  overflow-y: auto !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

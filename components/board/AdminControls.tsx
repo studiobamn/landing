@@ -1,135 +1,150 @@
 "use client";
 
-// Admin-only board controls (BOARD.md): Save/Commit (set restore point),
-// Wipe (restore checkpoint), Nuke (blank live, keep checkpoint, confirm modal).
-// All hit server routes that verify the admin session; on success we reload the
-// board locally and broadcast a reload so other clients re-pull board.data.
+// Admin-only board controls (Excalidraw/Yjs refactor): Set Checkpoint, Restore
+// Checkpoint, Clear Board. Restore & Clear are destructive → confirm first.
+// Also shows a soft element-count hint to prompt checkpointing when heavy.
 
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { NukeConfirmModal } from "./NukeConfirmModal";
+import { useEffect, useState } from "react";
+import { ConfirmModal } from "./ConfirmModal";
 
 interface AdminControlsProps {
-  getDocument: () => unknown | null; // current tldraw document snapshot
-  reload: () => Promise<void>; // re-pull board.data into the editor
-  broadcastReload: () => void; // tell other clients to reload
+  onSetCheckpoint: () => Promise<boolean>;
+  onRestoreCheckpoint: () => Promise<boolean>;
+  onClear: () => void;
+  elementCount: number;
+  mode: "admin" | "user";
+  save: () => Promise<boolean>;
+  loadingSave: boolean;
 }
 
 type Status = { text: string; tone: "ok" | "error" } | null;
+type Pending = null | "restore" | "clear";
+
+const SOFT_LIMIT = 2000;
 
 export function AdminControls({
-  getDocument,
-  reload,
-  broadcastReload,
+  onSetCheckpoint,
+  onRestoreCheckpoint,
+  onClear,
+  elementCount,
+  mode,
 }: AdminControlsProps) {
-  const { t } = useTranslation();
   const [busy, setBusy] = useState(false);
-  const [nukeOpen, setNukeOpen] = useState(false);
   const [status, setStatus] = useState<Status>(null);
 
-  const commit = async () => {
+  useEffect(() => {
+    if (!status) return;
+    const t = setTimeout(() => setStatus(null), 15_000);
+    return () => clearTimeout(t);
+  }, [status]);
+  const [pending, setPending] = useState<Pending>(null);
+
+  const checkpoint = async () => {
     setBusy(true);
     setStatus(null);
-    try {
-      const res = await fetch("/api/board/commit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ snapshot: getDocument() }),
-      });
-      setStatus(
-        res.ok
-          ? { text: t("admin.restorePointSet"), tone: "ok" }
-          : { text: t("admin.commitFailed"), tone: "error" },
-      );
-    } finally {
-      setBusy(false);
-    }
+    const ok = await onSetCheckpoint();
+    setStatus(
+      ok
+        ? { text: "Checkpoint saved.", tone: "ok" }
+        : { text: "Checkpoint failed.", tone: "error" },
+    );
+    setBusy(false);
   };
 
-  const wipe = async () => {
+  const runPending = async () => {
+    if (!pending) return;
     setBusy(true);
-    setStatus(null);
     try {
-      const res = await fetch("/api/board/wipe", { method: "POST" });
-      if (res.ok) {
-        await reload();
-        broadcastReload();
-        setStatus({ text: t("admin.wipedToCheckpoint"), tone: "ok" });
+      if (pending === "clear") {
+        onClear();
+        setStatus({ text: "Board cleared.", tone: "ok" });
       } else {
-        const body = await res.json().catch(() => ({}));
-        setStatus({
-          text: body.error ?? t("admin.wipeFailed"),
-          tone: "error",
-        });
+        const ok = await onRestoreCheckpoint();
+        setStatus(
+          ok
+            ? { text: "Restored to checkpoint.", tone: "ok" }
+            : { text: "No checkpoint found.", tone: "error" },
+        );
       }
     } finally {
       setBusy(false);
+      setPending(null);
     }
   };
 
-  const nuke = async () => {
-    setBusy(true);
-    try {
-      const res = await fetch("/api/board/nuke", { method: "POST" });
-      if (res.ok) {
-        await reload();
-        broadcastReload();
-        setStatus({ text: t("admin.boardNuked"), tone: "ok" });
-      } else {
-        setStatus({ text: t("admin.nukeFailed"), tone: "error" });
-      }
-    } finally {
-      setBusy(false);
-      setNukeOpen(false);
-    }
-  };
+  const heavy = elementCount > SOFT_LIMIT;
+  const btn =
+    "cursor-pointer border border-bamn-black bg-bamn-cream px-3 py-2 text-[10px] tracking-widest uppercase transition-colors hover:bg-bamn-black hover:text-bamn-cream disabled:opacity-50";
 
   return (
     <>
-      <div className="font-secondary pointer-events-auto fixed top-[100px] left-5 z-50 flex flex-col items-end gap-2">
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={commit}
-            disabled={busy}
-            className="cursor-pointer border border-bamn-black bg-bamn-cream px-3 py-2 text-[10px] tracking-widest uppercase transition-colors hover:bg-bamn-black hover:text-bamn-cream disabled:opacity-50"
-          >
-            {t("admin.commit")}
-          </button>
-          <button
-            type="button"
-            onClick={wipe}
-            disabled={busy}
-            className="cursor-pointer border border-bamn-black bg-bamn-cream px-3 py-2 text-[10px] tracking-widest uppercase transition-colors hover:bg-bamn-black hover:text-bamn-cream disabled:opacity-50"
-          >
-            {t("admin.wipe")}
-          </button>
-          <button
-            type="button"
-            onClick={() => setNukeOpen(true)}
-            disabled={busy}
-            className="cursor-pointer border border-bamn-red bg-bamn-cream px-3 py-2 text-[10px] tracking-widest text-bamn-red uppercase transition-colors hover:bg-bamn-red hover:text-bamn-cream disabled:opacity-50"
-          >
-            {t("admin.nuke")}
-          </button>
-        </div>
-        {status && (
+      {mode === "admin" && (
+        <div
+          style={{ zIndex: 4 }}
+          className="font-secondary pointer-events-auto fixed top-[100px] right-5  flex flex-col items-start gap-2"
+        >
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={checkpoint}
+              disabled={busy}
+              className={btn}
+            >
+              Set checkpoint
+            </button>
+            <button
+              type="button"
+              onClick={() => setPending("restore")}
+              disabled={busy}
+              className={btn}
+            >
+              Restore
+            </button>
+            <button
+              type="button"
+              onClick={() => setPending("clear")}
+              disabled={busy}
+              className="cursor-pointer border border-bamn-red bg-bamn-cream px-3 py-2 text-[10px] tracking-widest text-bamn-red uppercase transition-colors hover:bg-bamn-red hover:text-bamn-cream disabled:opacity-50"
+            >
+              Clear board
+            </button>
+          </div>
+
           <p
             className={`text-[10px] tracking-wide ${
-              status.tone === "error" ? "text-bamn-red" : "text-bamn-black/70"
+              heavy ? "text-bamn-red" : "text-bamn-black/60"
             }`}
           >
-            {status.text}
+            {elementCount} elements
+            {heavy ? " — getting heavy, consider checkpoint / clear" : ""}
           </p>
-        )}
-      </div>
 
-      {nukeOpen && (
-        <NukeConfirmModal
-          busy={busy}
-          onCancel={() => setNukeOpen(false)}
-          onConfirm={nuke}
-        />
+          {status && (
+            <p
+              className={`text-[10px] tracking-wide ${
+                status.tone === "error" ? "text-bamn-red" : "text-bamn-black/70"
+              }`}
+            >
+              {status.text}
+            </p>
+          )}
+          {pending && (
+            <ConfirmModal
+              busy={busy}
+              title={
+                pending === "clear" ? "Clear the board?" : "Restore checkpoint?"
+              }
+              message={
+                pending === "clear"
+                  ? "This wipes the live board to blank for everyone, immediately."
+                  : "This replaces the live board with your last checkpoint for everyone."
+              }
+              confirmLabel={pending === "clear" ? "Clear it" : "Restore"}
+              onCancel={() => setPending(null)}
+              onConfirm={runPending}
+            />
+          )}
+        </div>
       )}
     </>
   );
